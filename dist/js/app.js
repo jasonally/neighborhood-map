@@ -1,0 +1,218 @@
+// app.js - Contains the KnockoutJS implementation for the neighborhood map app.
+
+// Google Maps variables.
+var map;
+var infoWindow = new google.maps.InfoWindow();
+var bounds = new google.maps.LatLngBounds();
+
+// Yelp variables.
+var yelpAccessToken;
+var corsAnywhereUrl = 'https://cors-anywhere.herokuapp.com/';
+var yelpError = "The Yelp rating cannot be displayed right now.\nPlease try again later."
+
+var ViewModel = function() {
+  // Trick to make the current this available to subfunctions and closures.
+  // See https://stackoverflow.com/questions/17163248/whats-the-advantage-of-using-var-self-this-in-knockout-js-view-models
+  var self = this;
+
+  // Observable arrays which will be used throughout the ViewModel.
+  self.cafeList = ko.observableArray([]);
+  self.filteredCafeList = ko.observableArray([]);
+
+  // Set map to initial coordinates over San Francisco Bay. The map will be
+  // resized as markers get placed on it.
+  self.init = function() {
+    map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: 37.617254, lng: -122.111212},
+    zoom: 10
+    });
+  };
+
+  // For each location in cafeLocations, create a new instance of Cafe and add
+  // it to cafeList. cafeLocations is defined in model.js.
+  self.createCafeLocations = function() {
+    cafeLocations.forEach(function(cafeItem) {
+      self.cafeList.push(new Cafe(cafeItem));
+    });
+    // Resize the map to fit the marker from each Cafe instance.
+    map.fitBounds(bounds);
+  };
+
+  // Sorts the cafes alphabetically by name.
+  // See http://www.c-sharpcorner.com/UploadFile/cd7c2e/apply-sort-function-on-observable-array-using-knockoutjs/
+  self.sortCafeLocations = function() {
+    self.cafeList.sort(function (a, b) {
+      return a.title().toLowerCase() > b.title().toLowerCase() ? 1 : -1;});
+  };
+
+  // Add click event listener to each marker in cafeList. When a user clicks
+  // on a marker, call self.cafeClick().
+  self.setCafeClickFunctions = function() {
+    self.cafeList().forEach(function(cafe) {
+      google.maps.event.addListener(cafe.marker(), 'click', function() {
+        self.cafeClick(cafe);
+      });
+    });
+  };
+
+  // self.cafeClick() needs to be separate from self.setCafeClickFunctions() so
+  // because of the sidebar list in the app. When a user clicks on an item from
+  // the sidebar list, that will also trigger self.cafeClick().
+  self.cafeClick = function(cafe) {
+    var infoContent = '<div class="info-content"><div id="cafe-name"><b>' +
+                        cafe.title() + '</b></div>' +
+                      '<div id="cafe-address">' + cafe.address() + '</div>' +
+                      '<div id="cafe-neighborhood">' + cafe.neighborhood() +
+                        '</div>' +
+                      '<div class="info-content"><a href=https://www.facebook.com/' + cafe.facebook()
+                        + '/ target="_blank"><img src="img/fb_logo.png" height="29" width="29"/></a>'
+                      + ' <a href=https://www.instagram.com/explore/locations/'
+                        + cafe.instagramID() + '/ target="_blank"><img src="img/insta_logo.png" height="29" width="29"/></a></div>' +
+                      '<div id="yelp-content">Yelp rating: <a id="yelp-url" target="_blank"><img id="yelp-img"/></a></div>';
+    infoWindow.setContent(infoContent);
+    self.openIcon(cafe)
+  };
+
+  // When the user clicks an icon, start getting the Yelp rating. Then center
+  // the map to the icon, open the icon, and call the bounce function.
+  self.openIcon = function(cafe) {
+    self.getYelpAccessToken(cafe);
+    map.panTo(cafe.position());
+    infoWindow.open(map, cafe.marker());
+    self.bounceIcon(cafe);
+  };
+
+  // Making the icon bounce requires two distinct steps, so might as well have
+  // it in a dedicated function.
+  self.bounceIcon = function(cafe) {
+    cafe.marker().setAnimation(google.maps.Animation.BOUNCE);
+    setTimeout(function() {
+      cafe.marker().setAnimation(null);
+    }, 750);
+  };
+
+  self.filterCafes = function() {
+    self.filteredCafeList([]);
+
+    // Grab the search string and make it lowercase
+    var searchStr = $('#search-str').val().toLowerCase();
+
+    for (var i = 0; i < self.cafeList().length; i++) {
+      // We'll filter based on cafe title, city, or neighborhood. Grab all three
+      // entries for each instance of Cafe in cafeList and convert them to
+      // lowercase.
+      var cafeTitle = self.cafeList()[i].title().toLowerCase();
+      var cafeCity = self.cafeList()[i].city().toLowerCase();
+      var cafeNeighborhood = self.cafeList()[i].neighborhood().toLowerCase();
+
+      // If searchStr matches a cafe's title, city, or neighborhood, add the
+      // corresponding self.cafeList() entry to self.filteredCafeList(). Then
+      // put the matching marker on the map and hide the non-matching markers.
+      if (cafeTitle.indexOf(searchStr) > -1 ||
+          cafeCity.indexOf(searchStr) > -1 ||
+          cafeNeighborhood.indexOf(searchStr) > -1) {
+        self.filteredCafeList.push(self.cafeList()[i]);
+        self.cafeList()[i].marker().setMap(map);
+      } else {
+        self.cafeList()[i].marker().setMap(null);
+      }
+    }
+  };
+
+  // Using the Yelp API was much tricker thanks to the launch of Yelp Fusion, or
+  // Yelp API v3. Fusion requires an access token in API requests, which means
+  // it doesn't play nicely with CORS or JSON-P. This Udacity thread helps
+  // explain what you need to do:
+  // https://discussions.udacity.com/t/yelp-v3-implementation/235928/18
+  self.getYelpAccessToken = function(cafe) {
+    var yelpAuthUrl = corsAnywhereUrl + "https://api.yelp.com/oauth2/token";
+    // Clicking on one marker will make an access request and send back a
+    // token. If you click on another marker will make a request for the same
+    // token, so no need to ask for it again. You can skip to getting the rating
+    // data from the Yelp API.
+    if (yelpAccessToken) {
+      self.getYelpData(yelpAccessToken, cafe);
+    }
+    else {
+      $.ajax({
+        url: yelpAuthUrl,
+        method: "POST",
+        data: {
+            grant_type: 'client_credentials',
+            client_id: yelpClientID,
+            client_secret: yelpClientSecret
+        },
+      }).done(function(response){
+          // If the token request succeeds, save the token so subsequent
+          // requests won't be needed. Then call self.getYelpData().
+          yelpAccessToken = response.access_token;
+          self.getYelpData(yelpAccessToken, cafe);
+      }).fail(function(jqxhr, textStatus, error){
+          // Append an error to the marker infoWindow if the request fails.
+          $('#yelp-content').text(yelpError);
+      });
+    }
+  };
+
+  // Similar to what Yelp API v2 requests looked like, now that you have a
+  // token. Yelp API v3 no longer includes the rating image URL in the response,
+  // so I had to download the icons and include them in my app files.
+  self.getYelpData = function(yelpAccessToken, cafe) {
+    var yelpSearchUrl = "https://api.yelp.com/v3/businesses/";
+    var settings = {
+      "async": true,
+      "crossDomain": true,
+      "url": corsAnywhereUrl + yelpSearchUrl + cafe.yelpID(),
+      "method": "GET",
+      "headers": {
+        "authorization": "Bearer " + yelpAccessToken,
+        "cache-control": "no-cache"
+      }
+    };
+    $.ajax(settings).done(function(response) {
+      $('#yelp-img').attr("src", 'img/yelp_stars/small_' + response.rating +
+        '.png');
+      $('#yelp-url').attr("href", response.url)
+    }).fail(function(jqxhr, textStatus, error) {
+      $('#yelp-content').text(yelpError);
+    });
+  };
+
+  // Kick off these functions when the map loads.
+  google.maps.event.addDomListener(window, 'load', function() {
+    self.init();
+    self.createCafeLocations();
+    self.sortCafeLocations();
+    self.setCafeClickFunctions();
+    // Put the contents of self.cafeList() into self.filteredCafeList() at first
+    // so all cafes show at the first page load.
+    self.filteredCafeList(self.cafeList());
+  });
+};
+
+var Cafe = function(data) {
+  var marker;
+  this.title = ko.observable(data.title);
+  this.address = ko.observable(data.address);
+  this.city = ko.observable(data.city);
+  this.position = ko.observable(data.location);
+  this.neighborhood = ko.observable(data.neighborhood);
+  this.facebook = ko.observable(data.facebook);
+  this.instagramID = ko.observable(data.instagramID);
+  this.yelpID = ko.observable(data.yelpID);
+
+  marker = new google.maps.Marker({
+    title: this.title(),
+    position: this.position(),
+    map: map,
+  });
+
+  this.marker = ko.observable(marker);
+
+  // Extend the bounds variable each time a marker is created. This variable
+  // will be used to resize the map once each Cafe instance is created and added
+  // to self.cafeList.
+  bounds.extend(marker.position);
+};
+
+ko.applyBindings(new ViewModel());
