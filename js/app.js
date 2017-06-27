@@ -65,10 +65,10 @@ var ViewModel = function() {
                       '<div id="cafe-neighborhood">' + cafe.neighborhood() +
                         '</div>' +
                       '<div class="info-content"><a href=https://www.facebook.com/' + cafe.facebook()
-                        + '/ target="_blank"><img src="img/fb_logo.png" height="29" width="29"/></a>'
+                        + '/ target="_blank"><img src="img/fb_logo.png" height="29" width="29" alt="Facebook link"/></a>'
                       + ' <a href=https://www.instagram.com/explore/locations/'
-                        + cafe.instagramID() + '/ target="_blank"><img src="img/insta_logo.png" height="29" width="29"/></a></div>' +
-                      '<div id="yelp-content">Yelp rating: <a id="yelp-url" target="_blank"><img id="yelp-img"/></a></div>';
+                        + cafe.instagramID() + '/ target="_blank"><img src="img/insta_logo.png" height="29" width="29" alt="Instagram link"/></a></div>' +
+                      '<div id="yelp-content">Yelp rating: <a id="yelp-url" target="_blank"><img id="yelp-img" alt="Yelp link"/></a></div>';
     infoWindow.setContent(infoContent);
     self.openIcon(cafe)
   };
