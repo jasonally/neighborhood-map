@@ -7,8 +7,7 @@ googleMapsError = function() {
 };
 
 // As a nod to security I put my yelpClientID and yelpClientSecret in a separate
-// file, but for this type of project hosted on Github I don't think it's really
-// possible to fully conceal these variables. At least it's the thought that
-// counts?
+// file, but even Udacity notes it's not technically possibl eto make anything
+// secret on the client side. At least it's the thought that counts?
 var yelpClientID = "Ory9lXr5JX3muXuSS2YTHw";
 var yelpClientSecret = "RnIfASY37qKQEIfkvt9UStwFTuEQo0DD0mMEYbPKzV4yH84cj5Srxj3YW550udBC";
