@@ -86,6 +86,8 @@ var ViewModel = function() {
   // it in a dedicated function.
   self.bounceIcon = function(cafe) {
     cafe.marker().setAnimation(google.maps.Animation.BOUNCE);
+    // 750 milliseconds is exactly enough time for the icon to bounce up and
+    // down once.
     setTimeout(function() {
       cafe.marker().setAnimation(null);
     }, 750);
@@ -211,8 +213,9 @@ var Cafe = function(data) {
 
   // Extend the bounds variable each time a marker is created. This variable
   // will be used to resize the map once each Cafe instance is created and added
-  // to self.cafeList.
+  // to self.cafeList().
   bounds.extend(marker.position);
 };
 
+// Make it go!
 ko.applyBindings(new ViewModel());

@@ -16,20 +16,18 @@
           <h1>Bay Area Ice Cream Shops and Tea Cafes Map</h1>
           <div>
             <h4>Filter cafes by name, city, or neighborhood:</h4>
-            <form id="cafe-search" class="search-area"
-              data-bind="submit: filterCafes">
+            <form data-bind="submit: filterCafes">
               <input type="text" id="search-str" placeholder="Enter text here">
               <input type="submit" id="search-btn">
             </form>
           </div>
           <div class="cafe-list">
-            <ul id="results" data-bind="foreach: filteredCafeList">
-              <li class="cafe" id="cafe" data-bind="text: title,
-                click: $parent.cafeClick"></li>
+            <ul data-bind="foreach: filteredCafeList">
+              <li data-bind="text: title, click: $parent.cafeClick"></li>
             </ul>
           </div>
         </div>
-        <div class= "col-md-9">
+        <div class="col-md-9">
           <div id="map"></div>
         </div>
       </div>
