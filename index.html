@@ -13,7 +13,9 @@
     <div class="container">
       <div class="row">
         <div class="col-md-3 options-box">
-          <h1>Bay Area Ice Cream Shops and Tea Cafes</h1>
+          <header>
+            <h1>Bay Area Ice Cream Shops and Tea Cafes</h1>
+          </header>
           <div>
             <h4>Filter locations by name, city, or neighborhood:</h4>
             <form data-bind="submit: filterCafes">
@@ -21,15 +23,15 @@
               <input type="submit" id="search-btn">
             </form>
           </div>
-          <div class="cafe-list">
+          <nav class="cafe-list">
             <ul data-bind="foreach: filteredCafeList">
               <li data-bind="text: title, click: $parent.cafeClick"></li>
             </ul>
-          </div>
+          </nav>
         </div>
-        <div class="col-md-9">
+        <main class="col-md-9">
           <div id="map"></div>
-        </div>
+        </main>
       </div>
     </div>
     <script src="js/lib/jquery.min.js"></script>
