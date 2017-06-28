@@ -42,7 +42,7 @@ var ViewModel = function() {
   // See http://www.c-sharpcorner.com/UploadFile/cd7c2e/apply-sort-function-on-observable-array-using-knockoutjs/
   self.sortCafeLocations = function() {
     self.cafeList.sort(function (a, b) {
-      return a.title().toLowerCase() > b.title().toLowerCase() ? 1 : -1;});
+      return a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1;});
   };
 
   // Add click event listener to each marker in cafeList. When a user clicks
@@ -60,14 +60,14 @@ var ViewModel = function() {
   // the sidebar list, that will also trigger self.cafeClick().
   self.cafeClick = function(cafe) {
     var infoContent = '<div class="info-content"><div id="cafe-name"><b>' +
-                        cafe.title() + '</b></div>' +
-                      '<div id="cafe-address">' + cafe.address() + '</div>' +
-                      '<div id="cafe-neighborhood">' + cafe.neighborhood() +
+                        cafe.title + '</b></div>' +
+                      '<div id="cafe-address">' + cafe.address + '</div>' +
+                      '<div id="cafe-neighborhood">' + cafe.neighborhood +
                         '</div>' +
                       '<div class="info-content"><a href=https://www.facebook.com/' +
-                        cafe.facebook() + '/ target="_blank"><img src="img/fb_logo.png" height="29" width="29" alt="Facebook link"/></a>' +
+                        cafe.facebook + '/ target="_blank"><img src="img/fb_logo.png" height="29" width="29" alt="Facebook link"/></a>' +
                       ' <a href=https://www.instagram.com/explore/locations/' +
-                        cafe.instagramID() + '/ target="_blank"><img src="img/insta_logo.png" height="29" width="29" alt="Instagram link"/></a></div>' +
+                        cafe.instagramID + '/ target="_blank"><img src="img/insta_logo.png" height="29" width="29" alt="Instagram link"/></a></div>' +
                       '<div id="yelp-content">Yelp rating: <a id="yelp-url" target="_blank"><img id="yelp-img" alt="Yelp link"/></a></div>';
     infoWindow.setContent(infoContent);
     self.openIcon(cafe);
@@ -77,7 +77,7 @@ var ViewModel = function() {
   // the map to the icon, open the icon, and call the bounce function.
   self.openIcon = function(cafe) {
     self.getYelpAccessToken(cafe);
-    map.panTo(cafe.position());
+    map.panTo(cafe.position);
     infoWindow.open(map, cafe.marker());
     self.bounceIcon(cafe);
   };
@@ -164,7 +164,7 @@ var ViewModel = function() {
     var settings = {
       "async": true,
       "crossDomain": true,
-      "url": corsAnywhereUrl + yelpSearchUrl + cafe.yelpID(),
+      "url": corsAnywhereUrl + yelpSearchUrl + cafe.yelpID,
       "method": "GET",
       "headers": {
         "authorization": "Bearer " + yelpAccessToken,
@@ -190,22 +190,27 @@ var ViewModel = function() {
     // so all cafes show at the first page load.
     self.filteredCafeList(self.cafeList());
   });
+
+  google.maps.event.addDomListener(window, 'resize', function() {
+    map.fitBounds(bounds);
+  });
+
 };
 
 var Cafe = function(data) {
   var marker;
-  this.title = ko.observable(data.title);
-  this.address = ko.observable(data.address);
-  this.city = ko.observable(data.city);
-  this.position = ko.observable(data.location);
-  this.neighborhood = ko.observable(data.neighborhood);
-  this.facebook = ko.observable(data.facebook);
-  this.instagramID = ko.observable(data.instagramID);
-  this.yelpID = ko.observable(data.yelpID);
+  this.title = data.title;
+  this.address = data.address;
+  this.city = data.city;
+  this.position = data.location;
+  this.neighborhood = data.neighborhood;
+  this.facebook = data.facebook;
+  this.instagramID = data.instagramID;
+  this.yelpID = data.yelpID;
 
   marker = new google.maps.Marker({
-    title: this.title(),
-    position: this.position(),
+    title: this.title,
+    position: this.position,
     map: map,
   });
 
