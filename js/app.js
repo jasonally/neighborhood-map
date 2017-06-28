@@ -2,8 +2,8 @@
 
 // Google Maps variables.
 var map;
-var infoWindow = new google.maps.InfoWindow();
-var bounds = new google.maps.LatLngBounds();
+var infoWindow;
+var bounds;
 
 // Yelp variables.
 var yelpAccessToken;
@@ -181,7 +181,10 @@ var ViewModel = function() {
   };
 
   // Kick off these functions when the map loads.
-  google.maps.event.addDomListener(window, 'load', function() {
+  googleSuccess = function() {
+    bounds = new google.maps.LatLngBounds();
+    infoWindow = new google.maps.InfoWindow();
+
     self.init();
     self.createCafeLocations();
     self.sortCafeLocations();
@@ -189,11 +192,17 @@ var ViewModel = function() {
     // Put the contents of self.cafeList() into self.filteredCafeList() at first
     // so all cafes show at the first page load.
     self.filteredCafeList(self.cafeList());
-  });
 
-  google.maps.event.addDomListener(window, 'resize', function() {
-    map.fitBounds(bounds);
-  });
+    // Listener to resize the map as the user resizes the browser window.
+    google.maps.event.addDomListener(window, 'resize', function() {
+      map.fitBounds(bounds);
+    });
+  };
+
+  googleError = function() {
+    alert("There was an error loading Google Maps. Please check your internet \
+        connection and try again.");
+  };
 
 };
 
