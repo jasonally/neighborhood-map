@@ -8,7 +8,7 @@ var bounds = new google.maps.LatLngBounds();
 // Yelp variables.
 var yelpAccessToken;
 var corsAnywhereUrl = 'https://cors-anywhere.herokuapp.com/';
-var yelpError = "The Yelp rating cannot be displayed right now.\nPlease try again later."
+var yelpError = "The Yelp rating cannot be displayed right now.\nPlease try again later.";
 
 var ViewModel = function() {
   // Trick to make the current this available to subfunctions and closures.
@@ -60,17 +60,17 @@ var ViewModel = function() {
   // the sidebar list, that will also trigger self.cafeClick().
   self.cafeClick = function(cafe) {
     var infoContent = '<div class="info-content"><div id="cafe-name"><b>' +
-                        cafe.title() + '</b></div>' +
+                        + cafe.title() + '</b></div>' +
                       '<div id="cafe-address">' + cafe.address() + '</div>' +
                       '<div id="cafe-neighborhood">' + cafe.neighborhood() +
                         '</div>' +
-                      '<div class="info-content"><a href=https://www.facebook.com/' + cafe.facebook()
-                        + '/ target="_blank"><img src="img/fb_logo.png" height="29" width="29" alt="Facebook link"/></a>'
-                      + ' <a href=https://www.instagram.com/explore/locations/'
-                        + cafe.instagramID() + '/ target="_blank"><img src="img/insta_logo.png" height="29" width="29" alt="Instagram link"/></a></div>' +
+                      '<div class="info-content"><a href=https://www.facebook.com/' +
+                        cafe.facebook() + '/ target="_blank"><img src="img/fb_logo.png" height="29" width="29" alt="Facebook link"/></a>' +
+                      ' <a href=https://www.instagram.com/explore/locations/' +
+                        cafe.instagramID() + '/ target="_blank"><img src="img/insta_logo.png" height="29" width="29" alt="Instagram link"/></a></div>' +
                       '<div id="yelp-content">Yelp rating: <a id="yelp-url" target="_blank"><img id="yelp-img" alt="Yelp link"/></a></div>';
     infoWindow.setContent(infoContent);
-    self.openIcon(cafe)
+    self.openIcon(cafe);
   };
 
   // When the user clicks an icon, start getting the Yelp rating. Then center
@@ -174,7 +174,7 @@ var ViewModel = function() {
     $.ajax(settings).done(function(response) {
       $('#yelp-img').attr("src", 'img/yelp_stars/small_' + response.rating +
         '.png');
-      $('#yelp-url').attr("href", response.url)
+      $('#yelp-url').attr("href", response.url);
     }).fail(function(jqxhr, textStatus, error) {
       $('#yelp-content').text(yelpError);
     });

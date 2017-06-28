@@ -205,4 +205,4 @@ var cafeLocations = [
         instagramID: 298425707268049,
         yelpID: "tea-lyfe-drinks-san-jose-3"
     }
-]
+];
