@@ -60,7 +60,7 @@ var ViewModel = function() {
   // the sidebar list, that will also trigger self.cafeClick().
   self.cafeClick = function(cafe) {
     var infoContent = '<div class="info-content"><div id="cafe-name"><b>' +
-                        + cafe.title() + '</b></div>' +
+                        cafe.title() + '</b></div>' +
                       '<div id="cafe-address">' + cafe.address() + '</div>' +
                       '<div id="cafe-neighborhood">' + cafe.neighborhood() +
                         '</div>' +
