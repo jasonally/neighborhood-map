@@ -32,7 +32,7 @@ Prior Udacity students had an easier time making requests to Yelp's API. In Sept
 I opted for an easy Bootstrap design which resizes content based on viewport width. For smaller viewports the map wraps below the list of locations.
 
 ### Areas for Improvement
-There are a lot of ways I could improve this app.
+There are a lot of ways I could improve this app, but hopefully that doesn't make the current version any less useful.
 * I could devise a way to use the Facebook API instead of my hard-coded links to each location's Facebook page.
 * I could also explore ways to make my Yelp API requests faster, since sometimes it takes a second or two for the rating content to load, or I could use Yelp's business search feature in their API instead of having to save the Yelp ID for each location.
 * I could improve the mobile-friendliness of my app. For instance, I could hide the list of locations altogether for small viewports and use a button to display the menu when users want to see it.
