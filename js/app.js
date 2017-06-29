@@ -169,7 +169,7 @@ var ViewModel = function() {
     $.ajax(settings).done(function(response) {
       cafe.infoContent += '<div id="yelp-content">Yelp rating: <a href="' +
         response.url + '" target="_blank"><img src="img/yelp_stars/small_' +
-        response.rating + '.png" alt="Yelp link"/></a></div>'
+        response.rating + '.png" alt="Yelp link"/></a></div>';
       infoWindow.setContent(cafe.infoContent);
     }).fail(function(jqxhr, textStatus, error) {
       cafe.infoContent += yelpError;
@@ -198,8 +198,7 @@ var ViewModel = function() {
   };
 
   googleError = function() {
-    alert("There was an error loading Google Maps. Please check your internet \
-        connection and try again.");
+    alert("There was an error loading Google Maps. Please check your internet connection and try again.");
   };
 
 };
