@@ -8,7 +8,7 @@ var bounds;
 // Yelp variables.
 var yelpAccessToken;
 var corsAnywhereUrl = 'https://cors-anywhere.herokuapp.com/';
-var yelpError = "The Yelp rating cannot be displayed right now.\nPlease try again later.";
+var yelpError = '<div id="yelp-content">The Yelp rating cannot be displayed right now.\nPlease try again later.</div>';
 
 var ViewModel = function() {
   // Trick to make the current this available to subfunctions and closures.
@@ -61,17 +61,7 @@ var ViewModel = function() {
   // because of the sidebar list in the app. When a user clicks on an item from
   // the sidebar list, that will also trigger self.cafeClick().
   self.cafeClick = function(cafe) {
-    var infoContent = '<div class="info-content"><div id="cafe-name"><b>' +
-                        cafe.title + '</b></div>' +
-                      '<div id="cafe-address">' + cafe.address + '</div>' +
-                      '<div id="cafe-neighborhood">' + cafe.neighborhood +
-                        '</div>' +
-                      '<div class="info-content"><a href=https://www.facebook.com/' +
-                        cafe.facebook + '/ target="_blank"><img src="img/fb_logo.png" height="29" width="29" alt="Facebook link"/></a>' +
-                      ' <a href=https://www.instagram.com/explore/locations/' +
-                        cafe.instagramID + '/ target="_blank"><img src="img/insta_logo.png" height="29" width="29" alt="Instagram link"/></a></div>' +
-                      '<div id="yelp-content">Yelp rating: <a id="yelp-url" target="_blank"><img id="yelp-img" alt="Yelp link"/></a></div>';
-    infoWindow.setContent(infoContent);
+    infoWindow.setContent(cafe.infoContent);
     self.openIcon(cafe);
   };
 
@@ -97,8 +87,8 @@ var ViewModel = function() {
 
   self.filterCafes = ko.computed(function() {
     self.filteredCafeList([]);
-
     for (var i = 0; i < self.cafeList().length; i++) {
+
       // We'll filter based on cafe title, city, or neighborhood. Grab all three
       // entries for each instance of Cafe in cafeList and convert them to
       // lowercase.
@@ -113,12 +103,13 @@ var ViewModel = function() {
         cafeCity.indexOf(self.filterKeyword()) > -1 ||
         cafeNeighborhood.indexOf(self.filterKeyword()) > -1) {
         self.filteredCafeList.push(self.cafeList()[i]);
+        // setVisible(true) and setVisible(false) shows/hides the markers
+        // without completely re-rendering them -- more efficient.
         self.cafeList()[i].marker().setVisible(true);
       } else {
         self.cafeList()[i].marker().setVisible(false);
       }
     }
-
   });
 
   // Using the Yelp API was much tricker thanks to the launch of Yelp Fusion, or
@@ -128,6 +119,7 @@ var ViewModel = function() {
   // https://discussions.udacity.com/t/yelp-v3-implementation/235928/18
   self.getYelpAccessToken = function(cafe) {
     var yelpAuthUrl = corsAnywhereUrl + "https://api.yelp.com/oauth2/token";
+
     // Clicking on one marker will make an access request and send back a
     // token. If you click on another marker will make a request for the same
     // token, so no need to ask for it again. You can skip to getting the rating
@@ -145,13 +137,16 @@ var ViewModel = function() {
             client_secret: yelpClientSecret
         },
       }).done(function(response){
+
           // If the token request succeeds, save the token so subsequent
           // requests won't be needed. Then call self.getYelpData().
           yelpAccessToken = response.access_token;
           self.getYelpData(yelpAccessToken, cafe);
       }).fail(function(jqxhr, textStatus, error){
+
           // Append an error to the marker infoWindow if the request fails.
-          $('#yelp-content').text(yelpError);
+          cafe.infoContent += yelpError;
+          infoWindow.setContent(cafe.infoContent);
       });
     }
   };
@@ -172,11 +167,13 @@ var ViewModel = function() {
       }
     };
     $.ajax(settings).done(function(response) {
-      $('#yelp-img').attr("src", 'img/yelp_stars/small_' + response.rating +
-        '.png');
-      $('#yelp-url').attr("href", response.url);
+      cafe.infoContent += '<div id="yelp-content">Yelp rating: <a href="' +
+        response.url + '" target="_blank"><img src="img/yelp_stars/small_' +
+        response.rating + '.png" alt="Yelp link"/></a></div>'
+      infoWindow.setContent(cafe.infoContent);
     }).fail(function(jqxhr, textStatus, error) {
-      $('#yelp-content').text(yelpError);
+      cafe.infoContent += yelpError;
+      infoWindow.setContent(cafe.infoContent);
     });
   };
 
@@ -189,6 +186,7 @@ var ViewModel = function() {
     self.createCafeLocations();
     self.sortCafeLocations();
     self.setCafeClickFunctions();
+
     // Put the contents of self.cafeList() into self.filteredCafeList() at first
     // so all cafes show at the first page load.
     self.filteredCafeList(self.cafeList());
@@ -216,6 +214,20 @@ var Cafe = function(data) {
   this.facebook = data.facebook;
   this.instagramID = data.instagramID;
   this.yelpID = data.yelpID;
+
+  // Putting the infoWindow content for each cafe directly in a Cafe instance
+  // makes it easier to append the Yelp data without needing to use jQuery. See
+  // https://discussions.udacity.com/t/knockout-binding-from-infowindow/189235/12
+  // for more on how to avoid using jQuery for the infoWindows (requires you
+  // to log into Udacity to view the thread).
+  this.infoContent = '<div class="info-content"><div id="cafe-name"><b>' +
+      data.title + '</b></div>' +
+    '<div>' + data.address + '</div>' +
+    '<div>' + data.neighborhood + '</div>' +
+    '<div class="info-content"><a href=https://www.facebook.com/' +
+      data.facebook + '/ target="_blank"><img src="img/fb_logo.png" height="29" width="29" alt="Facebook link"/></a> ' +
+    '<a href=https://www.instagram.com/explore/locations/' + data.instagramID + '/ target="_blank">' +
+      '<img src="img/insta_logo.png" height="29" width="29" alt="Instagram link"/></a></div>';
 
   marker = new google.maps.Marker({
     title: this.title,
