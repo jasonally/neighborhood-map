@@ -125,30 +125,33 @@ var ViewModel = function() {
     // token. If you click on another marker will make a request for the same
     // token, so no need to ask for it again. You can skip to getting the rating
     // data from the Yelp API.
-    if (yelpAccessToken) {
-      self.getYelpData(yelpAccessToken, cafe);
-    }
-    else {
-      $.ajax({
-        url: yelpAuthUrl,
-        method: "POST",
-        data: {
-            grant_type: 'client_credentials',
-            client_id: yelpClientID,
-            client_secret: yelpClientSecret
-        },
-      }).done(function(response){
+    if (cafe.hasYelpContent == false) {
+      if (yelpAccessToken) {
+        self.getYelpData(yelpAccessToken, cafe);
+      }
+      else {
+        $.ajax({
+          url: yelpAuthUrl,
+          method: "POST",
+          data: {
+              grant_type: 'client_credentials',
+              client_id: yelpClientID,
+              client_secret: yelpClientSecret
+          },
+        }).done(function(response){
 
-          // If the token request succeeds, save the token so subsequent
-          // requests won't be needed. Then call self.getYelpData().
-          yelpAccessToken = response.access_token;
-          self.getYelpData(yelpAccessToken, cafe);
-      }).fail(function(jqxhr, textStatus, error){
+            // If the token request succeeds, save the token so subsequent
+            // requests won't be needed. Then call self.getYelpData().
+            yelpAccessToken = response.access_token;
+            self.getYelpData(yelpAccessToken, cafe);
+        }).fail(function(jqxhr, textStatus, error){
 
-          // Append an error to the marker infoWindow if the request fails.
-          cafe.infoContent += yelpError;
-          infoWindow.setContent(cafe.infoContent);
-      });
+            // Append an error to the marker infoWindow if the request fails.
+            cafe.infoContent += yelpError;
+            infoWindow.setContent(cafe.infoContent);
+            cafe.hasYelpContent = true;
+        });
+      }
     }
   };
 
@@ -172,9 +175,11 @@ var ViewModel = function() {
         response.url + '" target="_blank"><img src="img/yelp_stars/small_' +
         response.rating + '.png" alt="Yelp link"/></a></div>';
       infoWindow.setContent(cafe.infoContent);
+      cafe.hasYelpContent = true;
     }).fail(function(jqxhr, textStatus, error) {
       cafe.infoContent += yelpError;
       infoWindow.setContent(cafe.infoContent);
+      cafe.hasYelpContent = true;
     });
   };
 
@@ -228,6 +233,7 @@ var Cafe = function(data) {
       data.facebook + '/ target="_blank"><img src="img/fb_logo.png" height="29" width="29" alt="Facebook link"/></a> ' +
     '<a href=https://www.instagram.com/explore/locations/' + data.instagramID + '/ target="_blank">' +
       '<img src="img/insta_logo.png" height="29" width="29" alt="Instagram link"/></a></div>';
+  this.hasYelpContent = false;
 
   marker = new google.maps.Marker({
     title: this.title,
