@@ -15,7 +15,7 @@ You'll find the following inside this directory:
 6. `package.json` - Yarn's way of keeping track of which dependencies I've installed.
 
 ### How to Run
-Clone or download this repository to your desktop and open `index.html` in your browser. Or, you can use [this temporary link](https://cdn.rawgit.com/jasonally/neighborhood-map/f5d27122/dist/index.html) to view the map on the web until I learn how to use GitHub Pages.
+Clone or download this repository to your desktop and open `index.html` in your browser. The map is also viewable on the web [here](https://jasonally.github.io/neighborhood-map/).
 
 ### Building the App, Problems I Encountered, and Design Choices
 
@@ -36,3 +36,4 @@ There are a lot of ways I could improve this app, but hopefully that doesn't mak
 * I could devise a way to use the Facebook API instead of my hard-coded links to each location's Facebook page.
 * I could also explore ways to make my Yelp API requests faster, since sometimes it takes a second or two for the rating content to load, or I could use Yelp's business search feature in their API instead of having to save the Yelp ID for each location.
 * I could improve the mobile-friendliness of my app. For instance, I could hide the list of locations altogether for small viewports and use a button to display the menu when users want to see it.
+* This project has been around for a couple of years so there's more under-the-hood improvements to make which utilize more modern JavaScript development methods. This [Hacker Noon post](https://hackernoon.com/a-map-to-modern-javascript-development-2017-16d9eb86309c) covers some of them. My Udacity project reviewer also suggested I check out these methods and learn them.
