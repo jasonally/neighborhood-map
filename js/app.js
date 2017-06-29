@@ -86,6 +86,7 @@ var ViewModel = function() {
   };
 
   self.filterCafes = ko.computed(function() {
+    var lowerCaseKeyword = self.filterKeyword().toLowerCase()
     self.filteredCafeList([]);
     for (var i = 0; i < self.cafeList().length; i++) {
 
@@ -99,9 +100,9 @@ var ViewModel = function() {
       // If self.filterKeyword() matches a cafe's title, city, or neighborhood,
       // add the corresponding self.cafeList() entry to self.filteredCafeList().
       // Put the matching marker on the map and hide the non-matching markers.
-      if (cafeTitle.indexOf(self.filterKeyword()) > -1 ||
-        cafeCity.indexOf(self.filterKeyword()) > -1 ||
-        cafeNeighborhood.indexOf(self.filterKeyword()) > -1) {
+      if (cafeTitle.indexOf(lowerCaseKeyword) > -1 ||
+        cafeCity.indexOf(lowerCaseKeyword) > -1 ||
+        cafeNeighborhood.indexOf(lowerCaseKeyword) > -1) {
         self.filteredCafeList.push(self.cafeList()[i]);
         // setVisible(true) and setVisible(false) shows/hides the markers
         // without completely re-rendering them -- more efficient.
