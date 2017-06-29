@@ -18,10 +18,7 @@
           </header>
           <div>
             <h4>Filter locations by name, city, or neighborhood:</h4>
-            <form data-bind="submit: filterCafes">
-              <input type="text" id="search-str" placeholder="Enter text here">
-              <input type="submit" id="search-btn">
-            </form>
+            <input type="text" id="search-str" placeholder="Enter text here..." data-bind="textInput: filterKeyword">
           </div>
           <nav class="cafe-list">
             <ul data-bind="foreach: filteredCafeList">

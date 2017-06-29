@@ -19,6 +19,8 @@ var ViewModel = function() {
   self.cafeList = ko.observableArray([]);
   self.filteredCafeList = ko.observableArray([]);
 
+  self.filterKeyword = ko.observable('');
+
   // Set map to initial coordinates over San Francisco Bay. The map will be
   // resized as markers get placed on it.
   self.init = function() {
@@ -93,33 +95,31 @@ var ViewModel = function() {
     }, 750);
   };
 
-  self.filterCafes = function() {
+  self.filterCafes = ko.computed(function() {
     self.filteredCafeList([]);
-
-    // Grab the search string and make it lowercase
-    var searchStr = $('#search-str').val().toLowerCase();
 
     for (var i = 0; i < self.cafeList().length; i++) {
       // We'll filter based on cafe title, city, or neighborhood. Grab all three
       // entries for each instance of Cafe in cafeList and convert them to
       // lowercase.
-      var cafeTitle = self.cafeList()[i].title().toLowerCase();
-      var cafeCity = self.cafeList()[i].city().toLowerCase();
-      var cafeNeighborhood = self.cafeList()[i].neighborhood().toLowerCase();
+      var cafeTitle = self.cafeList()[i].title.toLowerCase();
+      var cafeCity = self.cafeList()[i].city.toLowerCase();
+      var cafeNeighborhood = self.cafeList()[i].neighborhood.toLowerCase();
 
-      // If searchStr matches a cafe's title, city, or neighborhood, add the
-      // corresponding self.cafeList() entry to self.filteredCafeList(). Then
-      // put the matching marker on the map and hide the non-matching markers.
-      if (cafeTitle.indexOf(searchStr) > -1 ||
-          cafeCity.indexOf(searchStr) > -1 ||
-          cafeNeighborhood.indexOf(searchStr) > -1) {
+      // If self.filterKeyword() matches a cafe's title, city, or neighborhood,
+      // add the corresponding self.cafeList() entry to self.filteredCafeList().
+      // Put the matching marker on the map and hide the non-matching markers.
+      if (cafeTitle.indexOf(self.filterKeyword()) > -1 ||
+        cafeCity.indexOf(self.filterKeyword()) > -1 ||
+        cafeNeighborhood.indexOf(self.filterKeyword()) > -1) {
         self.filteredCafeList.push(self.cafeList()[i]);
-        self.cafeList()[i].marker().setMap(map);
+        self.cafeList()[i].marker().setVisible(true);
       } else {
-        self.cafeList()[i].marker().setMap(null);
+        self.cafeList()[i].marker().setVisible(false);
       }
     }
-  };
+
+  });
 
   // Using the Yelp API was much tricker thanks to the launch of Yelp Fusion, or
   // Yelp API v3. Fusion requires an access token in API requests, which means
