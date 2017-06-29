@@ -82,7 +82,7 @@ var ViewModel = function() {
     // down once.
     setTimeout(function() {
       cafe.marker().setAnimation(null);
-    }, 750);
+    }, 700);
   };
 
   self.filterCafes = ko.computed(function() {
