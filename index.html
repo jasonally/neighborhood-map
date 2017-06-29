@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <meta name="description" content="A map of Bay Area ice cream shops and
+      tea cafes">
     <title>Bay Area Ice Cream Shops and Tea Cafes</title>
     <link href="https://fonts.googleapis.com/css?family=Roboto"
       rel="stylesheet">
@@ -18,7 +20,8 @@
           </header>
           <div>
             <h4>Filter locations by name, city, or neighborhood:</h4>
-            <input type="text" id="search-str" placeholder="Enter text here..." data-bind="textInput: filterKeyword">
+            <input type="text" id="search-str" placeholder="Enter text here..."
+              data-bind="textInput: filterKeyword">
           </div>
           <nav class="cafe-list">
             <ul data-bind="foreach: filteredCafeList">
