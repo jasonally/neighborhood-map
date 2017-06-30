@@ -26,6 +26,16 @@ var cafeLocations = [
         yelpID: "fentons-creamery-oakland-2"
     },
     {
+        title: "Lala's Creamery",
+        address: "134 Petaluma Blvd N, Petaluma, CA 94952",
+        city: "Petaluma",
+        neighborhood: "Downtown",
+        location: {lat: 38.2348812, lng: -122.6405575},
+        facebook: "Lalas-Creamery-122878727776661",
+        instagramID: 294580,
+        yelpID: "lalas-creamery-petaluma"
+    },
+    {
         title: "Tin Pot Creamery",
         address: "201 1st St, Los Altos, CA 94022",
         city: "Los Altos",
@@ -69,7 +79,7 @@ var cafeLocations = [
         title: "Boba Guys (San Carlos)",
         address: "872 Laurel St, San Carlos, CA 94070",
         city: "San Carlos",
-        neighborhood: "San Carlos",
+        neighborhood: "Downtown",
         location: {lat: 37.5026808, lng: -122.2570576},
         facebook: "bobaguys",
         instagramID: 1500547193309669,
@@ -94,6 +104,16 @@ var cafeLocations = [
         facebook: "biritecreamery",
         instagramID: 73168236,
         yelpID: "bi-rite-market-san-francisco-3"
+    },
+    {
+        title: "Boba Guys (Fillmore)",
+        address: "1522 Fillmore St, San Francisco, CA 94115",
+        city: "San Francisco",
+        neighborhood: "Fillmore",
+        location: {lat: 37.7836676, lng: -122.4325729},
+        facebook: "bobaguys",
+        instagramID: 602460303281110,
+        yelpID: "boba-guys-san-francisco-10"
     },
     {
         title: "Boba Guys (Hayes Valley)",
@@ -194,6 +214,16 @@ var cafeLocations = [
         facebook: "JT-Express-1209701299114693",
         instagramID: 1209701299114693,
         yelpID: "jt-express-san-jose-2"
+    },
+    {
+        title: "Sweet Rendezvous",
+        address: "668 Blossom Hill Rd, San Jose, CA 95123",
+        city: "South San Jose",
+        neighborhood: "Vietnam Town",
+        location: {lat: 37.2492919, lng: -121.8457816},
+        facebook: "SanJoseSweetRendezvous",
+        instagramID: 216722576,
+        yelpID: "sweet-rendezvous-san-jose"
     },
     {
         title: "Tea Lyfe",
