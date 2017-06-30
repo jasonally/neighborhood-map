@@ -218,8 +218,8 @@ var cafeLocations = [
     {
         title: "Sweet Rendezvous",
         address: "668 Blossom Hill Rd, San Jose, CA 95123",
-        city: "South San Jose",
-        neighborhood: "Vietnam Town",
+        city: "San Jose",
+        neighborhood: "South San Jose",
         location: {lat: 37.2492919, lng: -121.8457816},
         facebook: "SanJoseSweetRendezvous",
         instagramID: 216722576,
